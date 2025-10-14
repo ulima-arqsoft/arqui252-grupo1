@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI
 on:
   push:
   pull_request:
@@ -43,3 +43,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/mini-api:latest
           build-args: |
             API_BASE_URL=${{ env.API_BASE_URL }}
+            
+      - name: Trigger deploy in Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
