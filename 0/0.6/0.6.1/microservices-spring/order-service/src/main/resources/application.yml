@@ -1,13 +1,63 @@
 spring:
   application:
     name: order-service
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 1000
+            readTimeout: 1000
+            loggerLevel: full
+          productClient:
+            connectTimeout: 1000
+            readTimeout: 1000
+            defaultRequestHeaders:
+              Connection: close
 server:
   port: 8083
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: '*'
+  health:
+    circuitbreakers:
+      enabled: true
+    show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productClient:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5000
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        allowHealthIndicatorToFail: false
+        recordExceptions:
+          - feign.FeignException
+          - feign.RetryableException
+          - java.io.IOException
+          - java.net.SocketTimeoutException
+          - java.net.ConnectException
+  retry:
+    configs:
+      default:
+        maxAttempts: 2
+        waitDuration: 300ms
+        retryExceptions:
+          - feign.FeignException
+          - feign.RetryableException
+          - java.io.IOException
+          - java.net.SocketTimeoutException
 
 clients:
   user:

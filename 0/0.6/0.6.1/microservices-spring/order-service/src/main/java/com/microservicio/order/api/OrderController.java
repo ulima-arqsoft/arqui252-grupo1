@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderController.class);
   private final UserClient userClient;
   private final ProductClient productClient;
 
@@ -23,16 +24,40 @@ public class OrderController {
   }
 
   @PostMapping
-  @Retry(name = "default")
-  @CircuitBreaker(name = "default", fallbackMethod = "fallback")
   public ResponseEntity<OrderDto> create(@RequestBody Map<String, Integer> body) {
     User user = userClient.getById(body.get("userId"));
     Product product = productClient.getById(body.get("productId"));
-    OrderDto order = new OrderDto(System.currentTimeMillis(), user, product, product.price(), "CREATED");
-    return ResponseEntity.status(201).body(order);
+    
+    String status = determineOrderStatus(user, product);
+    OrderDto order = new OrderDto(
+        System.currentTimeMillis(),
+        user,
+        product,
+        product.price(),
+        status
+    );
+    
+    return ResponseEntity.status(isSuccessful(status) ? 201 : 200).body(order);
   }
 
-  public ResponseEntity<OrderDto> fallback(Map<String, Integer> body, Throwable t) {
-    return ResponseEntity.status(503).build();
+  private String determineOrderStatus(User user, Product product) {
+    boolean isUserFallback = user.name().contains("FALLBACK");
+    boolean isProductFallback = product.name().contains("FALLBACK");
+
+    if (isUserFallback && isProductFallback) {
+        log.warn("Both services are unavailable");
+        return "FALLBACK_ALL_SERVICES_DOWN";
+    } else if (isUserFallback) {
+        log.warn("User service is unavailable");
+        return "FALLBACK_USER_SERVICE_DOWN";
+    } else if (isProductFallback) {
+        log.warn("Product service is unavailable");
+        return "FALLBACK_PRODUCT_SERVICE_DOWN";
+    }
+    return "CREATED";
+  }
+
+  private boolean isSuccessful(String status) {
+    return status.equals("CREATED");
   }
 }
