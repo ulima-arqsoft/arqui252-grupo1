@@ -1,0 +1,7 @@
+services:
+  api:
+    build: ./api
+    environment:
+      - API_BASE_URL=${API_BASE_URL:-https://example.local}
+    ports:
+      - "3000:3000"
