@@ -1,0 +1,19 @@
+{
+  "name": "demo-movil",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test.js"
+    },
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "browserstack-local": "^1.5.8",
+    "dotenv": "^17.2.3",
+    "selenium-webdriver": "^4.36.0"
+  }
+}
