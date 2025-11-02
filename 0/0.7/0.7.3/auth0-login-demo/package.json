@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "name": "auth0-login-demo",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node src/infraestructura/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-openid-connect": "^2.19.2"
+  }
+}
