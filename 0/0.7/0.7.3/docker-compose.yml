@@ -1,0 +1,10 @@
+services:
+  auth0-login-demo:
+    build:
+      context: ./auth0-login-demo
+      dockerfile: Dockerfile
+    container_name: auth0-login-demo
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./auth0-login-demo/.env
