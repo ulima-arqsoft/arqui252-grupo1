@@ -1,0 +1,18 @@
+{
+  "name": "mini-erp-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Mini ERP con patrón Scheduler-Agent-Supervisor",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3"
+  }
+}
